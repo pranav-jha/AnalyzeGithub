@@ -25,7 +25,8 @@ ON_LINUX = (platform.system() == 'Linux')
 
 
 
-
+#############################Done by PAPA##################################################################
+WEEKDAYS = ('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun')
 
 exectime_internal = 0.0
 exectime_external = 0.0
@@ -818,6 +819,129 @@ class HTMLReportCreator(ReportCreator):
 			f.write('<td>%s</td>' % (WEEKS - i))
 		f.write('</tr></table>')
 		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		################################################        By Pratik  ###############################################################################
+		# Hour of Day
+		f.write(html_header(2, 'Hour of Day (By Pratik)'))
+		hour_of_day = data.getActivityByHourOfDay()
+		f.write('<table><tr><th>Hour</th>')
+		for i in range(0, 24):
+			f.write('<th>%d</th>' % i)
+		f.write('</tr>\n<tr><th>Commits</th>')
+		fp = open(path + '/hour_of_day.dat', 'w')
+		for i in range(0, 24):
+			if i in hour_of_day:
+				r = 127 + int((float(hour_of_day[i]) / data.activity_by_hour_of_day_busiest) * 128)
+				f.write('<td style="background-color: rgb(%d, 0, 0)">%d</td>' % (r, hour_of_day[i]))
+				fp.write('%d %d\n' % (i, hour_of_day[i]))
+			else:
+				f.write('<td>0</td>')
+				fp.write('%d 0\n' % i)
+		fp.close()
+		f.write('</tr>\n<tr><th>%</th>')
+		totalcommits = data.getTotalCommits()
+		for i in range(0, 24):
+			if i in hour_of_day:
+				r = 127 + int((float(hour_of_day[i]) / data.activity_by_hour_of_day_busiest) * 128)
+				f.write('<td style="background-color: rgb(%d, 0, 0)">%.2f</td>' % (r, (100.0 * hour_of_day[i]) / totalcommits))
+			else:
+				f.write('<td>0.00</td>')
+		f.write('</tr></table>')
+		f.write('<img src="hour_of_day.png" alt="Hour of Day">')
+		fg = open(path + '/hour_of_day.dat', 'w')
+		for i in range(0, 24):
+			if i in hour_of_day:
+				fg.write('%d %d\n' % (i + 1, hour_of_day[i]))
+			else:
+				fg.write('%d 0\n' % (i + 1))
+		fg.close()
+
+		# Day of Week
+		f.write(html_header(2, 'Day of Week'))
+		day_of_week = data.getActivityByDayOfWeek()
+		f.write('<div class="vtable"><table>')
+		f.write('<tr><th>Day</th><th>Total (%)</th></tr>')
+		fp = open(path + '/day_of_week.dat', 'w')
+		for d in range(0, 7):
+			commits = 0
+			if d in day_of_week:
+				commits = day_of_week[d]
+			fp.write('%d %s %d\n' % (d + 1, WEEKDAYS[d], commits))
+			f.write('<tr>')
+			f.write('<th>%s</th>' % (WEEKDAYS[d]))
+			if d in day_of_week:
+				f.write('<td>%d (%.2f%%)</td>' % (day_of_week[d], (100.0 * day_of_week[d]) / totalcommits))
+			else:
+				f.write('<td>0</td>')
+			f.write('</tr>')
+		f.write('</table></div>')
+		f.write('<img src="day_of_week.png" alt="Day of Week">')
+		fp.close()
+
+		# Hour of Week
+		f.write(html_header(2, 'Hour of Week'))
+		f.write('<table>')
+
+		f.write('<tr><th>Weekday</th>')
+		for hour in range(0, 24):
+			f.write('<th>%d</th>' % (hour))
+		f.write('</tr>')
+
+		for weekday in range(0, 7):
+			f.write('<tr><th>%s</th>' % (WEEKDAYS[weekday]))
+			for hour in range(0, 24):
+				try:
+					commits = data.activity_by_hour_of_week[weekday][hour]
+				except KeyError:
+					commits = 0
+				if commits != 0:
+					f.write('<td')
+					r = 127 + int((float(commits) / data.activity_by_hour_of_week_busiest) * 128)
+					f.write(' style="background-color: rgb(%d, 0, 0)"' % r)
+					f.write('>%d</td>' % commits)
+				else:
+					f.write('<td></td>')
+			f.write('</tr>')
+
+		f.write('</table>')
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
